@@ -6,7 +6,7 @@ Defines Drake Environments for use with OpenAI RL algorithms.
 
 ### TensorFlow
 
-Install from [pip](https://www.tensorflow.org/install/install_linux) or from [source](https://www.tensorflow.org/install/install_sources)
+Install from [pip](https://www.tensorflow.org/install/install_linux) or from [source](https://www.tensorflow.org/install/install_sources).
 
 ### OpenAI Gym
 
