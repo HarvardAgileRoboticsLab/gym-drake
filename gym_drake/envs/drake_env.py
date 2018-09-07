@@ -20,29 +20,23 @@ class DrakeEnv(gym.Env):
         output_limit_high : upper bound on outputs (may be np.inf)
         '''
 
+        # Create the Diagram.
+        self.system = self.plant_system()
+        self.context = self.system.CreateDefaultContext()
+        zero_ctrl = np.zeros(self.system.get_input_port_action().size())
+        action_fixed_input_port_value = self.context.FixInputPort(self.get_input_port_action().get_index(), zero_ctrl)
+        self.mutable_action_vector = action_fixed_input_port_value.GetMutableVectorData()
+
         assert len(input_limit_low) == len(input_limit_low)
-        assert len(input_limit_low) == system.get_num_total_inputs()
+        assert len(input_limit_low) == self.system.input_port_action().size()
         assert len(output_limit_low) == len(output_limit_low)
-        assert len(output_limit_low) == system.get_num_total_outputs()
-
-        # Define the action and observation space.
-        self.action_space = spaces.Box(*self.action_limits)
-        self.observation_space = spaces.Box(*self.observation_limits)
-
-        # Create the diagram.
-        self.builder = DiagramBuilder()
-        initial_input = np.zeros_like(self.input_limit_low)
-        self.input = builder.AddSystem(ConstantVectorSource(initial_input))
-        self.system = builder.AddSystem(self.get_mdp_diagram())
-        builder.Connect(self.input.get_output_port(),
-                        self.system.get_input_port_action())
-        self.diagram = builder.Build()
+        assert len(output_limit_low) == self.output_port_observation().size()
 
         # Create the simulator.
-        self.simulator = Simulator(self.diagram)
-        self.time = 0.
+        self.simulator = Simulator(self.system, self.context)
+        self.simulator.set_publish_every_time_step(False)
 
-    def get_mdp_diagram(self):
+    def plant_system(self):
         '''
         Returns the fully constructed MDP diagram which is connected to the
         vector source for simulation. Each subclass should implement this
@@ -56,15 +50,28 @@ class DrakeEnv(gym.Env):
         '''
         raise NotImplementedError
 
+    def get_input_port_action(self):
+        '''
+        Returns the system input port that corresponds to the action
+        '''
+        raise NotImplementedError
+
+    def get_output_port_observation(self):
+        '''
+        Returns the system output port that corresponds to the observation
+        '''
+        raise NotImplementedError
+
+
     @property
-    def action_limits(self):
+    def action_space(self):
         '''
         Specifies the limits of tha action space. This must be overridden by subclasses.
         '''
         raise NotImplementedError
 
     @property
-    def observation_limits(self):
+    def observation_space(self):
       '''
       Specifies the limits of tha action space. This must be overridden by subclasses.
       '''
@@ -76,12 +83,9 @@ class DrakeEnv(gym.Env):
         '''
         temp = self.input_system.get_mutable_source_value().get_mutable_value()
         temp = action
-        simulator.StepTo(self.time + self.dt)
-        self.time += self.dt
-        pass
+        simulator.StepTo(self.context.get_time() + self.dt)
 
     def reset(self):
-        self.time = 0
         '''
         Resets the state in the system diagram
         '''

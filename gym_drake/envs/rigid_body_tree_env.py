@@ -9,24 +9,44 @@ class RigidBodyTreeEnv(DrakeEnv):
     the RigidBodyPlant for simulation and DrakeVisualizer for visualization.
     '''
 
-    def __init__(self, tree, limits):
-        dt = 0.01
-        self._action_limits = limits['action']
-        self._observation_limits = limits['observation']
-        super(DrakeEnv, self).__init__()
+    def __init__(self, tree):
+        self.tree = tree
+        RigidBodyTree.__init__(self)
+
+    def get_plant_system(self):
+        '''
+        Implements the get_mdp_diagram method in DrakeEnv by constructing a RigidBodyPlant
+        '''
+        return builder.AddSystem(RigidBodyPlant(tree))
+
+    @property action_space
+    def action_space(self):
+        return spaces.Box(*self.action_limits)
+
+    @property observation_space
+    def action_space(self):
+        return spaces.Box(*self.observation_limits)
 
     @property
     def action_limits(self):
-        return self._action_limits
+        '''
+        Subclasses should implement their own action limits
+        '''
+        raise NotImplementedError
 
     @property
     def observation_limits(self):
-        return self._observation_limits
+        '''
+        Subclasses should implement their own observation limits
+        '''
+        raise NotImplementedError
 
-    def get_mdp_diagram(self):
+
+    def get_reward(self, state, action):
         '''
-        Constructs the Pendulum MDP with a quadratic reward that is maximized at np.pi
+        Subclasses should implement their own reward functions 
         '''
+        raise NotImplementedError
 
     def init_visualizer(self):
         return DrakeVisualizer(tree_)
