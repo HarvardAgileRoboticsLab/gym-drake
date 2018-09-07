@@ -49,7 +49,7 @@ from pydrake.systems.analysis import Simulator
 
 from drake import lcmt_viewer_load_robot
 
-from underactuated.utils import FindResource, Rgba2Hex
+from utils import FindResource, Rgba2Hex
 
 import meshcat
 import meshcat.transformations as tf
@@ -60,7 +60,7 @@ class MeshcatVisualizer(LeafSystem):
                  scene_graph,
                  draw_timestep=0.033333,
                  prefix="SceneGraph",
-                 zmq_url="tcp://127.0.0.1:6000"):
+                 zmq_url="tcp://127.0.0.1:7000"):
         LeafSystem.__init__(self)
 
         self.set_name('meshcat_visualization')
