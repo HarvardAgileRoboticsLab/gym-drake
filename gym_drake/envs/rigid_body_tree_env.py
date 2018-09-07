@@ -1,9 +1,9 @@
 import gym
 import numpy as np
 from pydrake.all import RigidBodyTree, RigidBodyPlant
-from drake_env import DrakeEnv
+from gym_drake.envs import drake_env
 
-class RigidBodyTreeEnv(DrakeEnv):
+class RigidBodyTreeEnv(drake_env.DrakeEnv):
     '''
     Implements a DrakeEnv for models specified by a RigidBodyTree. Constructs
     the RigidBodyPlant for simulation and DrakeVisualizer for visualization.

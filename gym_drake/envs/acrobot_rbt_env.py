@@ -2,10 +2,10 @@ import gym
 import numpy as np
 from pydrake.all import (RigidBodyTree, RigidBodyFrame,
                          AddModelInstanceFromUrdfFile, FloatingBaseType)
-from rigid_body_tree_env import RigidBodyTreeEnv
+from gym_drake.envs import rigid_body_tree_env
 
 
-class AcrobotRBTEnv(RigidBodyTreeEnv):
+class AcrobotRBTEnv(rigid_body_tree_env.RigidBodyTreeEnv):
     def __init__(self, limits=None):
         # create RigidBodyTree
         tree = RigidBodyTree()
@@ -23,7 +23,7 @@ class AcrobotRBTEnv(RigidBodyTreeEnv):
             self._observation_limits = limits['observation']
 
         # Call super-class constructor
-        RigidBodyTreeEnv.__init__(self, tree)
+        rigid_body_tree_env.RigidBodyTreeEnv.__init__(self, tree)
 
     @property
     def action_limits(self):
@@ -32,8 +32,3 @@ class AcrobotRBTEnv(RigidBodyTreeEnv):
     @property
     def observation_limits(self):
         return self._observation_limits
-
-if __name__ == "__main__":
-    acrobot = AcrobotEnv()
-    acrobot.reset()
-    acrobot.step()
