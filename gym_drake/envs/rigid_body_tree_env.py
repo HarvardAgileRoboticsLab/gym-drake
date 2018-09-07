@@ -2,7 +2,7 @@ import gym
 import numpy as np
 from pydrake.all import RigidBodyTree, RigidBodyPlant
 from gym_drake.envs import drake_env
-from meshcash_rigid_body_visualizer import MeshcatVisualizer
+from meshcat_rigid_body_visualizer import MeshcatRigidBodyVisualizer
 
 class RigidBodyTreeEnv(drake_env.DrakeEnv):
     '''
