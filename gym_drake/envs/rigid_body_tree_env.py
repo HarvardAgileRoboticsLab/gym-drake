@@ -52,7 +52,7 @@ class RigidBodyTreeEnv(drake_env.DrakeEnv):
 
     def get_reward(self, state, action):
         '''
-        Subclasses should implement their own reward functions 
+        Subclasses should implement their own reward functions
         '''
         raise NotImplementedError
 

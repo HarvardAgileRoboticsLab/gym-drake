@@ -3,17 +3,17 @@ import numpy as np
 from multi_body_tree_env import MultiBodyTreeEnv
 
 
-class AcrobotMBTEnv(MultiBodyTreeEnv):
+class CartpoleMBTEnv(MultiBodyTreeEnv):
     def __init__(self):
         # Call super-class constructor
-        print('AcrobotMBTEnv init')
-        super(AcrobotMBTEnv, self).__init__("models/acrobot.sdf")
+        print('CartpoleMBTEnv init')
+        super(CartpoleMBTEnv, self).__init__("models/cart_pole.sdf")
 
-    @property
+    @property # TODO: choose better limits
     def action_limits(self):
         return (np.array([-2.0]), np.array([-2.0]))
 
-    @property
+    @property # TODO: choose better limits
     def observation_limits(self):
         return (np.array([-np.inf, -np.inf]),
                         np.array([np.inf, np.inf]))
@@ -30,4 +30,4 @@ class AcrobotMBTEnv(MultiBodyTreeEnv):
 
 
 if __name__ == "__main__":
-    AcrobotMBTEnv()
+    CartpoleMBTEnv()
