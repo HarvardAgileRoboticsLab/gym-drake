@@ -19,3 +19,8 @@ register(
     id='DrakeAcrobotMBT-v0',
     entry_point='gym_drake.envs:AcrobotMBTEnv',
 )
+
+register(
+    id='DrakeCartpoleMBT-v0',
+    entry_point='gym_drake.envs:CartpoleMBTEnv',
+)
