@@ -1,15 +1,16 @@
 import gym
 from gym import error, spaces, utils
+import numpy as np
 
-from pydrake.all import Simulator, DiagramBuilder, MdpDiagram
-
+from pydrake.all import Simulator, DiagramBuilder, ConstantVectorSource#, MdpDiagram
+# from pydrake.systems.framework import DiagramBuilder
 
 class DrakeEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
     def __init__(self):
         '''
-        Sets up the System diagram and creates a drake visualizer object to 
+        Sets up the System diagram and creates a drake visualizer object to
         send LCM messages to during the render method.
 
         Subclasses must implement the variables
@@ -27,10 +28,10 @@ class DrakeEnv(gym.Env):
         action_fixed_input_port_value = self.context.FixInputPort(self.get_input_port_action().get_index(), zero_ctrl)
         self.mutable_action_vector = action_fixed_input_port_value.GetMutableVectorData()
 
-        assert len(input_limit_low) == len(input_limit_low)
-        assert len(input_limit_low) == self.system.input_port_action().size()
-        assert len(output_limit_low) == len(output_limit_low)
-        assert len(output_limit_low) == self.output_port_observation().size()
+        # assert len(input_limit_low) == len(input_limit_low)
+        # assert len(input_limit_low) == self.system.input_port_action().size()
+        # assert len(output_limit_low) == len(output_limit_low)
+        # assert len(output_limit_low) == self.output_port_observation().size()
 
         # Create the simulator.
         self.simulator = Simulator(self.system, self.context)
