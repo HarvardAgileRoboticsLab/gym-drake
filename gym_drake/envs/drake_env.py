@@ -45,7 +45,8 @@ class DrakeEnv(gym.Env):
         '''
         raise NotImplementedError
 
-    def init_visualizer(self):
+    @property
+    def visualizer(self):
         '''
         Initializes and returns a DrakeVisualizer system. This must be overridden by subclasses.
         '''
@@ -96,4 +97,6 @@ class DrakeEnv(gym.Env):
         '''
         Sends an LCM message to the visualizer
         '''
-        pass
+        context = self.simulator.get_mutable_context()
+        state = context.get_mutable_continuous_state_vector()
+        self.visualizer.draw(state.CopyToVector())

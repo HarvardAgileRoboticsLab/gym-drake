@@ -2,7 +2,7 @@ import gym
 import numpy as np
 from pydrake.all import RigidBodyTree, RigidBodyPlant
 from gym_drake.envs import drake_env
-from meshcash_rigid_body_visualizer import MeshcatVisualizer
+from meshcat_rigid_body_visualizer import MeshcatRigidBodyVisualizer
 
 class RigidBodyTreeEnv(drake_env.DrakeEnv):
     '''
@@ -12,6 +12,7 @@ class RigidBodyTreeEnv(drake_env.DrakeEnv):
 
     def __init__(self, tree):
         self.tree = tree
+        self._visualizer = None
         RigidBodyTree.__init__(self)
 
     def get_plant_system(self):
@@ -20,11 +21,17 @@ class RigidBodyTreeEnv(drake_env.DrakeEnv):
         '''
         return builder.AddSystem(RigidBodyPlant(tree))
 
-    @property action_space
+    @property
+    def visualizer(self):
+        if self._visualizer is None:
+            self._visualizer = MeshcatRigidBodyVisualizer(self.tree, draw_collision=True)
+        return self._visualizer
+
+    @property
     def action_space(self):
         return spaces.Box(*self.action_limits)
 
-    @property observation_space
+    @property
     def action_space(self):
         return spaces.Box(*self.observation_limits)
 
