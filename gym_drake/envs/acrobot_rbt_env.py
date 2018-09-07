@@ -5,7 +5,7 @@ from pydrake.all import (RigidBodyTree, RigidBodyFrame,
 from rigid_body_tree_env import RigidBodyTreeEnv
 
 
-class AcrobotEnv(RigidBodyTreeEnv):
+class AcrobotRBTEnv(RigidBodyTreeEnv):
     def __init__(self, limits=None):
         # create RigidBodyTree
         tree = RigidBodyTree()
