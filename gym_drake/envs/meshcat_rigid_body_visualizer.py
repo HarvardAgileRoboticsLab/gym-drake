@@ -42,7 +42,7 @@ from pydrake.all import (
     Simulator,
 )
 
-from underactuated.utils import FindResource, Rgba2Hex
+from utils import FindResource, Rgba2Hex
 
 import meshcat
 import meshcat.transformations as tf

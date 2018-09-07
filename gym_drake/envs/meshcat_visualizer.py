@@ -49,7 +49,7 @@ from pydrake.systems.analysis import Simulator
 
 from drake import lcmt_viewer_load_robot
 
-from underactuated.utils import FindResource, Rgba2Hex
+from utils import FindResource, Rgba2Hex
 
 import meshcat
 import meshcat.transformations as tf

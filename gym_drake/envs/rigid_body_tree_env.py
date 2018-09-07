@@ -19,11 +19,11 @@ class RigidBodyTreeEnv(drake_env.DrakeEnv):
         '''
         return builder.AddSystem(RigidBodyPlant(tree))
 
-    @property action_space
+    @property
     def action_space(self):
         return spaces.Box(*self.action_limits)
 
-    @property observation_space
+    @property
     def action_space(self):
         return spaces.Box(*self.observation_limits)
 
@@ -44,7 +44,7 @@ class RigidBodyTreeEnv(drake_env.DrakeEnv):
 
     def get_reward(self, state, action):
         '''
-        Subclasses should implement their own reward functions 
+        Subclasses should implement their own reward functions
         '''
         raise NotImplementedError
 

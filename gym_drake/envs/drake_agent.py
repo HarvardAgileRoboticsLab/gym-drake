@@ -10,7 +10,7 @@ if __name__ == '__main__':
         env = gym.make('DrakeAcrobotMBT-v0')
         # env = gym.make('DrakeCartpole-v0')
 
-    env.env.disableViewer = True
+    env.disableViewer = True
 
     env.reset()
 
