@@ -25,7 +25,6 @@ class DrakeEnv(gym.Env):
         self.system = self.plant_system()
         self.context = self.system.CreateDefaultContext()
         # zero_ctrl = np.zeros(self.system.get_input_port_action().size())
-        # action_fixed_input_port_value = self.context.FixInputPort(self.get_input_port_action().get_index(), zero_ctrl)
         # self.mutable_action_vector = action_fixed_input_port_value.GetMutableVectorData()
 
         # assert len(input_limit_low) == len(input_limit_low)
@@ -36,7 +35,6 @@ class DrakeEnv(gym.Env):
         # Create the simulator.
         self.simulator = Simulator(self.system, self.context)
         self.simulator.set_publish_every_time_step(False)
-        print('drake env init')
 
     def plant_system(self):
         '''
@@ -86,6 +84,8 @@ class DrakeEnv(gym.Env):
         '''
         # temp = self.input_system.get_mutable_source_value().get_mutable_value()
         # temp = action
+        # import pdb; pdb.set_trace()
+        action_fixed_input_port_value = self.context.FixInputPort(self.get_input_port_action().get_index(), action)
         self.simulator.StepTo(self.context.get_time() + self.dt)
 
     def reset(self):

@@ -10,12 +10,13 @@ if __name__ == '__main__':
         # env = gym.make('DrakeAcrobotMBT-v0')
         env = gym.make('DrakeCartpoleMBT-v0')
 
-    env.disableViewer = True
+    # env.disableViewer = True
 
     env.reset()
 
 
     for i in range(20):
         env.step([0])
+        env.render()
         print("step ",i)
         # env.step(env.action_space.sample())

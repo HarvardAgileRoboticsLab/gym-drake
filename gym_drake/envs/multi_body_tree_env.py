@@ -4,8 +4,6 @@ from pydrake.all import DiagramBuilder, SceneGraph, MultibodyPlant, AddModelFrom
 from gym_drake.envs import drake_env
 from meshcat_visualizer import MeshcatVisualizer
 
-from meshcat_visualizer import MeshcatVisualizer
-
 class MultiBodyTreeEnv(drake_env.DrakeEnv):
     '''
     Implements a DrakeEnv for models specified by a RigidBodyTree. Constructs
@@ -15,7 +13,6 @@ class MultiBodyTreeEnv(drake_env.DrakeEnv):
     def __init__(self, fname):
         self.fname = fname
         self._visualizer = None
-        # MultiBodyTreeEnv.__init__(self)
         super(MultiBodyTreeEnv, self).__init__()
 
     @property
@@ -30,36 +27,38 @@ class MultiBodyTreeEnv(drake_env.DrakeEnv):
         '''
         builder = DiagramBuilder()
         self.scene_graph = builder.AddSystem(SceneGraph())
-        mbp = builder.AddSystem(MultibodyPlant())
+        self.mbp = builder.AddSystem(MultibodyPlant())
         AddModelFromSdfFile(
-            file_name=self.fname, plant=mbp, scene_graph=self.scene_graph)
-        mbp.AddForceElement(UniformGravityFieldElement([0, 0, -9.81]))
-        mbp.Finalize(self.scene_graph)
-        assert mbp.geometry_source_is_registered()
+            file_name=self.fname, plant=self.mbp, scene_graph=self.scene_graph)
+        # mbp.AddForceElement(UniformGravityFieldElement([0, 0, -9.81]))
+        self.mbp.Finalize(self.scene_graph)
+        assert self.mbp.geometry_source_is_registered()
         # self.np = mbp.num_positions()
         # self.nv = mbp.num_velocities()
 
         builder.Connect(
-            mbp.get_geometry_poses_output_port(),
-            self.scene_graph.get_source_pose_port(mbp.get_source_id()))
+            self.mbp.get_geometry_poses_output_port(),
+            self.scene_graph.get_source_pose_port(self.mbp.get_source_id()))
 
         # visualize = disableViewer in kwargs and kwargs[disableViewer]
         # if visualize:
-        visualizer = builder.AddSystem(MeshcatVisualizer(scene_graph))
-        builder.Connect(scene_graph.get_pose_bundle_output_port(),
+        visualizer = builder.AddSystem(MeshcatVisualizer(self.scene_graph))
+        visualizer.load() # TODO: do we need this?
+        
+        builder.Connect(self.scene_graph.get_pose_bundle_output_port(),
                         visualizer.get_input_port(0))
 
-        diagram = builder.Build()
-        # if visualize:
-        visualizer.load() # TODO: is this re-orderable?
-        return diagram
+        self._input_port_index_action = builder.ExportInput(self.mbp.get_actuation_input_port())
+        self.diagram = builder.Build()
+        
+        return self.diagram
 
 
     def get_input_port_action(self):
         '''
         Returns the system input port that corresponds to the action
         '''
-        return self.mbp.get_actuation_input_port()
+        return self.diagram.get_input_port(self._input_port_index_action) 
 
     def get_output_port_observation(self):
         '''
