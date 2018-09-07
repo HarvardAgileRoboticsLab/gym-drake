@@ -2,6 +2,7 @@ import gym
 import numpy as np
 from pydrake.all import RigidBodyTree, RigidBodyPlant
 from gym_drake.envs import drake_env
+from meshcash_rigid_body_visualizer import MeshcatVisualizer
 
 class RigidBodyTreeEnv(drake_env.DrakeEnv):
     '''
@@ -49,4 +50,4 @@ class RigidBodyTreeEnv(drake_env.DrakeEnv):
         raise NotImplementedError
 
     def init_visualizer(self):
-        return DrakeVisualizer(tree_)
+        return MeshcatRigidBodyVisualizer(tree_)
