@@ -2,7 +2,7 @@ import gym
 import numpy as np
 from pydrake.all import DiagramBuilder, SceneGraph, MultibodyPlant, AddModelFromSdfFile, UniformGravityFieldElement
 from gym_drake.envs import drake_env
-from meshcat_visualizer import MeshcatVisualizer
+from meshcat_visualizer import MeshcatVisualizerMBP
 
 class MultiBodyTreeEnv(drake_env.DrakeEnv):
     '''
@@ -15,10 +15,13 @@ class MultiBodyTreeEnv(drake_env.DrakeEnv):
         self._visualizer = None
         super(MultiBodyTreeEnv, self).__init__()
 
+    def init_visualizer(self):
+        if self._visualizer is None:
+            self._visualizer = MeshcatVisualizerMBP(self.scene_graph)
+            self._visualizer.load()
+
     @property
     def visualizer(self):
-        if self._visualizer is None:
-            self._visualizer = MeshcatVisualizer(self.scene_graph)
         return self._visualizer
 
     def plant_system(self):
@@ -33,26 +36,17 @@ class MultiBodyTreeEnv(drake_env.DrakeEnv):
         # mbp.AddForceElement(UniformGravityFieldElement([0, 0, -9.81]))
         self.mbp.Finalize(self.scene_graph)
         assert self.mbp.geometry_source_is_registered()
-        # self.np = mbp.num_positions()
-        # self.nv = mbp.num_velocities()
+        self.init_visualizer()
 
         builder.Connect(
             self.mbp.get_geometry_poses_output_port(),
             self.scene_graph.get_source_pose_port(self.mbp.get_source_id()))
 
-        # visualize = disableViewer in kwargs and kwargs[disableViewer]
-        # if visualize:
-        visualizer = builder.AddSystem(MeshcatVisualizer(self.scene_graph))
-        visualizer.load() # TODO: do we need this?
-        
-        builder.Connect(self.scene_graph.get_pose_bundle_output_port(),
-                        visualizer.get_input_port(0))
-
         self._input_port_index_action = builder.ExportInput(self.mbp.get_actuation_input_port())
+        self._output_port_index_state = builder.ExportOutput(self.mbp.get_continuous_state_output_port())
         self.diagram = builder.Build()
-        
-        return self.diagram
 
+        return self.diagram
 
     def get_input_port_action(self):
         '''
@@ -64,8 +58,7 @@ class MultiBodyTreeEnv(drake_env.DrakeEnv):
         '''
         Returns the system output port that corresponds to the observation
         '''
-        raise NotImplementedError
-
+        raise self.diagram.get_output_port(self._output_port_index_state)
 
     @property
     def action_space(self):

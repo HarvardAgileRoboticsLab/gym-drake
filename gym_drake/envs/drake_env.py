@@ -1,9 +1,15 @@
 import gym
-from gym import error, spaces, utils
+from gym import (
+    error,
+    spaces,
+    utils
+)
 import numpy as np
-
-from pydrake.all import Simulator, DiagramBuilder, ConstantVectorSource#, MdpDiagram
-# from pydrake.systems.framework import DiagramBuilder
+from pydrake.all import (
+    ConstantVectorSource
+    DiagramBuilder,
+    Simulator,
+)
 
 class DrakeEnv(gym.Env):
     metadata = {'render.modes': ['human']}
@@ -13,24 +19,18 @@ class DrakeEnv(gym.Env):
         Sets up the System diagram and creates a drake visualizer object to
         send LCM messages to during the render method.
 
-        Subclasses must implement the variables
-        dt                : timestep between step() calls
-        input_limit_low   : lower bound on inputs
-        input_limit_high  : upper bound on inputs
-        output_limit_low  : lower bound on outputs (may be -np.inf)
-        output_limit_high : upper bound on outputs (may be np.inf)
+        Subclasses must implement the methods:
+            - plant_system()
+            - visualizer()
+            - get_input_port_action()
+            - get_output_port_observation()
+            - action_space()
+            - observation_space()
         '''
 
         # Create the Diagram.
         self.system = self.plant_system()
         self.context = self.system.CreateDefaultContext()
-        # zero_ctrl = np.zeros(self.system.get_input_port_action().size())
-        # self.mutable_action_vector = action_fixed_input_port_value.GetMutableVectorData()
-
-        # assert len(input_limit_low) == len(input_limit_low)
-        # assert len(input_limit_low) == self.system.input_port_action().size()
-        # assert len(output_limit_low) == len(output_limit_low)
-        # assert len(output_limit_low) == self.output_port_observation().size()
 
         # Create the simulator.
         self.simulator = Simulator(self.system, self.context)
@@ -73,18 +73,15 @@ class DrakeEnv(gym.Env):
 
     @property
     def observation_space(self):
-      '''
-      Specifies the limits of tha action space. This must be overridden by subclasses.
-      '''
-      raise NotImplementedError
+        '''
+        Specifies the limits of tha action space. This must be overridden by subclasses.
+        '''
+        raise NotImplementedError
 
     def step(self, action):
         '''
         Simulates the system diagram for a short period of time
         '''
-        # temp = self.input_system.get_mutable_source_value().get_mutable_value()
-        # temp = action
-        # import pdb; pdb.set_trace()
         action_fixed_input_port_value = self.context.FixInputPort(self.get_input_port_action().get_index(), action)
         self.simulator.StepTo(self.context.get_time() + self.dt)
 
@@ -98,6 +95,7 @@ class DrakeEnv(gym.Env):
         '''
         Sends an LCM message to the visualizer
         '''
-        context = self.simulator.get_mutable_context()
-        state = context.get_mutable_continuous_state_vector()
-        self.visualizer.draw(state.CopyToVector())
+        raise NotImplementedError
+        sim_context = self.simulator.get_context()
+        sg_context = context = self.diagram.GetSubsystemContext(self.scene_graph, sim_context)
+        self.visualizer.draw(sg_context)
