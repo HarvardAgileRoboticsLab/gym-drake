@@ -1,15 +1,11 @@
 import gym
-from gym import (
-    error,
-    spaces,
-    utils
-)
+from gym import (error, spaces, utils)
 import numpy as np
 from pydrake.all import (
-    ConstantVectorSource
     DiagramBuilder,
     Simulator,
 )
+
 
 class DrakeEnv(gym.Env):
     metadata = {'render.modes': ['human']}
@@ -26,6 +22,7 @@ class DrakeEnv(gym.Env):
             - get_output_port_observation()
             - action_space()
             - observation_space()
+            - render()
         '''
 
         # Create the Diagram.
@@ -63,7 +60,6 @@ class DrakeEnv(gym.Env):
         '''
         raise NotImplementedError
 
-
     @property
     def action_space(self):
         '''
@@ -82,7 +78,8 @@ class DrakeEnv(gym.Env):
         '''
         Simulates the system diagram for a short period of time
         '''
-        action_fixed_input_port_value = self.context.FixInputPort(self.get_input_port_action().get_index(), action)
+        action_fixed_input_port_value = self.context.FixInputPort(
+            self.get_input_port_action().get_index(), action)
         self.simulator.StepTo(self.context.get_time() + self.dt)
 
     def reset(self):
@@ -93,9 +90,6 @@ class DrakeEnv(gym.Env):
 
     def render(self, mode='human', close=False):
         '''
-        Sends an LCM message to the visualizer
+        Notifies the visualizer to draw the current state. Different implementations based on MultiBodyPlant and RigidBodyTree
         '''
         raise NotImplementedError
-        sim_context = self.simulator.get_context()
-        sg_context = context = self.diagram.GetSubsystemContext(self.scene_graph, sim_context)
-        self.visualizer.draw(sg_context)

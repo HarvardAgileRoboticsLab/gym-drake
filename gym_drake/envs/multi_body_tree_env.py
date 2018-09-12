@@ -1,8 +1,15 @@
 import gym
 import numpy as np
-from pydrake.all import DiagramBuilder, SceneGraph, MultibodyPlant, AddModelFromSdfFile, UniformGravityFieldElement
+from pydrake.all import (
+    AddModelFromSdfFile,
+    DiagramBuilder,
+    MultibodyPlant,
+    SceneGraph,
+    UniformGravityFieldElement,
+)
 from gym_drake.envs import drake_env
-from meshcat_visualizer import MeshcatVisualizerMBP
+from meshcat_visualizer_mbp import MeshcatVisualizerMBP
+
 
 class MultiBodyTreeEnv(drake_env.DrakeEnv):
     '''
@@ -28,22 +35,31 @@ class MultiBodyTreeEnv(drake_env.DrakeEnv):
         '''
         Implements the get_mdp_diagram method in DrakeEnv by constructing a RigidBodyPlant
         '''
+
+        # Add Systems
         builder = DiagramBuilder()
         self.scene_graph = builder.AddSystem(SceneGraph())
         self.mbp = builder.AddSystem(MultibodyPlant())
+
+        # Load the model from the file
         AddModelFromSdfFile(
             file_name=self.fname, plant=self.mbp, scene_graph=self.scene_graph)
-        # mbp.AddForceElement(UniformGravityFieldElement([0, 0, -9.81]))
+        self.mbp.AddForceElement(UniformGravityFieldElement([0, 0, -9.81]))
         self.mbp.Finalize(self.scene_graph)
         assert self.mbp.geometry_source_is_registered()
+
+        # Visualizer must be initialized after Finalize() and before CreateDefaultContext()
         self.init_visualizer()
 
         builder.Connect(
             self.mbp.get_geometry_poses_output_port(),
             self.scene_graph.get_source_pose_port(self.mbp.get_source_id()))
 
-        self._input_port_index_action = builder.ExportInput(self.mbp.get_actuation_input_port())
-        self._output_port_index_state = builder.ExportOutput(self.mbp.get_continuous_state_output_port())
+        # Expose the inputs and outputs and build the diagram
+        self._input_port_index_action = builder.ExportInput(
+            self.mbp.get_actuation_input_port())
+        self._output_port_index_state = builder.ExportOutput(
+            self.mbp.get_continuous_state_output_port())
         self.diagram = builder.Build()
 
         return self.diagram
@@ -52,7 +68,7 @@ class MultiBodyTreeEnv(drake_env.DrakeEnv):
         '''
         Returns the system input port that corresponds to the action
         '''
-        return self.diagram.get_input_port(self._input_port_index_action) 
+        return self.diagram.get_input_port(self._input_port_index_action)
 
     def get_output_port_observation(self):
         '''
@@ -82,13 +98,17 @@ class MultiBodyTreeEnv(drake_env.DrakeEnv):
         '''
         raise NotImplementedError
 
-
     def get_reward(self, state, action):
         '''
         Subclasses should implement their own reward functions
         '''
         raise NotImplementedError
 
-    # def init_visualizer(self):
-    #     return DrakeVisualizer(tree_)
-
+    def render(self, mode='human', close=False):
+        '''
+        Sends an LCM message to the visualizer
+        '''
+        sim_context = self.simulator.get_context()
+        sg_context = context = self.diagram.GetSubsystemContext(
+            self.scene_graph, sim_context)
+        self.visualizer.draw(sg_context)
