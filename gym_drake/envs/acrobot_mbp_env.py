@@ -1,12 +1,11 @@
 import numpy as np
-import pdb; pdb.set_trace()
 from gym_drake.envs import multi_body_plant_env
 
 
 class AcrobotMBPEnv(multi_body_plant_env.MultiBodyPlantEnv):
     def __init__(self):
         # Call super-class constructor with the model path
-        super(AcrobotMBPEnv, self).__init__("models/acrobot.sdf")
+        super(AcrobotMBPEnv, self).__init__("acrobot.sdf")
 
     @property
     def action_limits(self):

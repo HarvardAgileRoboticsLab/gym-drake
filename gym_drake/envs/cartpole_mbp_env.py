@@ -5,7 +5,7 @@ from gym_drake.envs import multi_body_plant_env
 class CartpoleMBPEnv(multi_body_plant_env.MultiBodyPlantEnv):
     def __init__(self):
         # Call super-class constructor with the model path
-        super(CartpoleMBPEnv, self).__init__("models/cart_pole.sdf")
+        super(CartpoleMBPEnv, self).__init__("cart_pole.sdf")
 
     @property
     def action_limits(self):

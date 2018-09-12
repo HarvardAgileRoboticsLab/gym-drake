@@ -3,6 +3,16 @@ import os
 def FindResource(filename):
     return os.path.join(os.path.dirname(os.path.dirname(__file__)), filename)
 
+def get_full_model_path(filename):
+    if filename.startswith("/"):
+        full_path = filename
+    else:
+        full_path = os.path.join(os.path.dirname(__file__), "models", filename)
+    if not os.path.exists(full_path):
+        raise IOError("File %s does not exist" % full_path)
+    return full_path
+
+
 def Rgba2Hex(rgb):
     ''' Turn a list of R,G,B elements (any indexable
     list of >= 3 elements will work), where each element

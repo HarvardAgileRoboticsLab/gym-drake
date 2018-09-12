@@ -9,7 +9,7 @@ from pydrake.all import (
 )
 from gym_drake.envs import drake_env
 from meshcat_visualizer_mbp import MeshcatVisualizerMBP
-
+from utils import get_full_model_path
 
 class MultiBodyPlantEnv(drake_env.DrakeEnv):
     '''
@@ -17,8 +17,8 @@ class MultiBodyPlantEnv(drake_env.DrakeEnv):
     the MultiBodyPlant for simulation and MeshcatVisualizer for visualization.
     '''
 
-    def __init__(self, fname):
-        self.fname = fname
+    def __init__(self, model_path):
+        self.model_path = get_full_model_path(model_path)
         self._visualizer = None
         super(MultiBodyPlantEnv, self).__init__()
 
@@ -43,7 +43,7 @@ class MultiBodyPlantEnv(drake_env.DrakeEnv):
 
         # Load the model from the file
         AddModelFromSdfFile(
-            file_name=self.fname, plant=self.mbp, scene_graph=self.scene_graph)
+            file_name=self.model_path, plant=self.mbp, scene_graph=self.scene_graph)
         self.mbp.AddForceElement(UniformGravityFieldElement([0, 0, -9.81]))
         self.mbp.Finalize(self.scene_graph)
         assert self.mbp.geometry_source_is_registered()

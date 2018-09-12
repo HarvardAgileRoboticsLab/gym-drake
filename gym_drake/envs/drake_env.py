@@ -81,6 +81,7 @@ class DrakeEnv(gym.Env):
         action_fixed_input_port_value = self.context.FixInputPort(
             self.get_input_port_action().get_index(), action)
         self.simulator.StepTo(self.context.get_time() + self.dt)
+        # return observation, reward, done, info
 
     def reset(self):
         '''

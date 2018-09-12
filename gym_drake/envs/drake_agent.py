@@ -15,5 +15,4 @@ if __name__ == '__main__':
     for i in range(20):
         env.step(env.action_space.sample())
         env.render()
-        time.sleep(.1)
         print("step ",i)
