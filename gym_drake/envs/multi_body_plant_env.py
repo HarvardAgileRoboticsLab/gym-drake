@@ -11,16 +11,16 @@ from gym_drake.envs import drake_env
 from meshcat_visualizer_mbp import MeshcatVisualizerMBP
 
 
-class MultiBodyTreeEnv(drake_env.DrakeEnv):
+class MultiBodyPlantEnv(drake_env.DrakeEnv):
     '''
-    Implements a DrakeEnv for models specified by a RigidBodyTree. Constructs
-    the RigidBodyPlant for simulation and DrakeVisualizer for visualization.
+    Implements a DrakeEnv for models specified by a MultiBodyPlant. Constructs
+    the MultiBodyPlant for simulation and MeshcatVisualizer for visualization.
     '''
 
     def __init__(self, fname):
         self.fname = fname
         self._visualizer = None
-        super(MultiBodyTreeEnv, self).__init__()
+        super(MultiBodyPlantEnv, self).__init__()
 
     def init_visualizer(self):
         if self._visualizer is None:
@@ -78,11 +78,11 @@ class MultiBodyTreeEnv(drake_env.DrakeEnv):
 
     @property
     def action_space(self):
-        return spaces.Box(*self.action_limits)
+        return gym.spaces.Box(*self.action_limits, dtype=np.float32)
 
     @property
     def observation_space(self):
-        return spaces.Box(*self.observation_limits)
+        return gym.spaces.Box(*self.observation_limits)
 
     @property
     def action_limits(self):

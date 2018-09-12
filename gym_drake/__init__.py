@@ -11,16 +11,21 @@ register(
 )
 
 register(
+    id='MultiBodyPlant-v0',
+    entry_point='gym_drake.envs:MultiBodyPlant',
+)
+
+register(
     id='DrakeAcrobotRBTEnv-v0',
     entry_point='gym_drake.envs:AcrobotRBTEnv',
 )
 
 register(
-    id='DrakeAcrobotMBT-v0',
-    entry_point='gym_drake.envs:AcrobotMBTEnv',
+    id='DrakeAcrobotMBP-v0',
+    entry_point='gym_drake.envs:AcrobotMBPEnv',
 )
 
 register(
-    id='DrakeCartpoleMBT-v0',
-    entry_point='gym_drake.envs:CartpoleMBTEnv',
+    id='DrakeCartpoleMBP-v0',
+    entry_point='gym_drake.envs:CartpoleMBPEnv',
 )

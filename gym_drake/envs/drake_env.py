@@ -86,6 +86,7 @@ class DrakeEnv(gym.Env):
         '''
         Resets the state in the system diagram
         '''
+        self.context.set_time(0)
         pass
 
     def render(self, mode='human', close=False):

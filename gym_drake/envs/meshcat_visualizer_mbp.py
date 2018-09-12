@@ -1,20 +1,12 @@
 # -*- coding: utf8 -*-
 
 '''
-
 Usage:
 
-MeshcatVisualizer acts like a PyPlotVisualizer from the perspective of the
-code: it is a System block that connects to the pose bundle output port of a
-SceneGraph and visualizes the scene at every time step.
-
-However, where PyPlotVisualizer opens its own visualizer window,
-MeshcatVisualizer expects the command `meshcat-server`
-to already be running in another terminal. The visualization
-will be available at the web url provided by that server in real
-time (either when the system is being simulated, or when the
-animate() method is called).
-
+Start the MeshcatVisualizer with the command `meshcat-server` in another
+terminal. The visualization will be available at the web url provided by that
+server in real time when the correspondin environment's render() method is
+called.
 '''
 
 import numpy as np
