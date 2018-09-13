@@ -33,7 +33,7 @@ class MultiBodyPlantEnv(drake_env.DrakeEnv):
 
     def plant_system(self):
         '''
-        Implements the get_mdp_diagram method in DrakeEnv by constructing a RigidBodyPlant
+        Implements the plant_system method in DrakeEnv by constructing a RigidBodyPlant
         '''
 
         # Add Systems

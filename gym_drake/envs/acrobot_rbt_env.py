@@ -1,34 +1,40 @@
-import gym
 import numpy as np
-from pydrake.all import (RigidBodyTree, RigidBodyFrame,
-                         AddModelInstanceFromUrdfFile, FloatingBaseType)
 from gym_drake.envs import rigid_body_tree_env
-
+from pydrake.all import FloatingBaseType
 
 class AcrobotRBTEnv(rigid_body_tree_env.RigidBodyTreeEnv):
-    def __init__(self, limits=None):
-        # create RigidBodyTree
-        tree = RigidBodyTree()
-        world_frame = RigidBodyFrame("world_frame", tree.world(), [0, 0, 0],
-                                     [0, 0, 0])
-        model_path = "models/Acrobot.urdf"
-        AddModelInstanceFromUrdfFile(model_path, FloatingBaseType.kFixed,
-                                     world_frame, tree)
-        # Set limits
-        if limits is None:
-            self._action_limits = (np.array([-2.0]), np.array([-2.0]))
-            self._observation_limits = (np.array([-np.inf, -np.inf]), np.array([np.inf, np.inf]))
-        else:
-            self._action_limits = limits['action']
-            self._observation_limits = limits['observation']
+    use_shaped_reward = True
 
-        # Call super-class constructor
-        rigid_body_tree_env.RigidBodyTreeEnv.__init__(self, tree)
+    def __init__(self):
+        # Call super-class constructor with the model path
+        super(AcrobotRBTEnv, self).__init__("Acrobot.urdf", FloatingBaseType.kFixed)
+        self.state_des = np.array([0, np.pi, 0, 0])
+        self.eps = 1e-2
 
     @property
     def action_limits(self):
-        return self._action_limits
+        return (np.array([-2.0]), np.array([2.0]))
 
     @property
     def observation_limits(self):
-        return self._observation_limits
+        return (np.array([-np.inf, -np.inf]), np.array([np.inf, np.inf]))
+
+    @property
+    def dt(self):
+        return 0.1
+
+    def get_reward(self, state, action):
+        err = self.state_des - state
+        if self.use_shaped_reward:
+            # quadratic cost on the error and action
+            return -err.dot(err) - action.dot(action)
+        else:
+            # sparse reward
+            return 1.0 if err < eps else 0.0
+
+    def is_done(self):
+        '''
+        Returns true if the acrobot is close enough to the goal
+        '''
+        err = self.state_des - self.get_state()
+        return err.dot(err) < self.eps or self.context.get_time() > 10

@@ -3,9 +3,9 @@
 '''
 Usage:
 
-Start the MeshcatVisualizer with the command `meshcat-server` in another
+Start the MeshCat visualizer with the command `meshcat-server` in another
 terminal. The visualization will be available at the web url provided by that
-server in real time when the correspondin environment's render() method is
+server in real time when the corresponding environment's render() method is
 called.
 '''
 

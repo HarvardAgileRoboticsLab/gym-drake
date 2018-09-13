@@ -8,7 +8,8 @@ if __name__ == '__main__':
         env = gym.make(sys.argv[1])
     else:
         # env = gym.make('DrakeAcrobotMBP-v0')
-        env = gym.make('DrakeCartpoleMBP-v0')
+        # env = gym.make('DrakeCartpoleMBP-v0')
+        env = gym.make('DrakeAcrobotRBT-v0')
 
     env.reset()
 

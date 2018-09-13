@@ -1,8 +1,9 @@
 import gym
 import numpy as np
-from pydrake.all import RigidBodyTree, RigidBodyPlant
+from pydrake.all import RigidBodyTree, RigidBodyPlant, AddModelInstanceFromUrdfFile, FloatingBaseType
 from gym_drake.envs import drake_env
-from meshcat_rigid_body_visualizer import MeshcatRigidBodyVisualizer
+from meshcat_visualizer_rbt import MeshcatVisualizerRBT
+from utils import get_full_model_path
 
 class RigidBodyTreeEnv(drake_env.DrakeEnv):
     '''
@@ -10,30 +11,48 @@ class RigidBodyTreeEnv(drake_env.DrakeEnv):
     the RigidBodyPlant for simulation and DrakeVisualizer for visualization.
     '''
 
-    def __init__(self, tree):
-        self.tree = tree
+    def __init__(self, model_path, floating_base_type):
+        self.model_path = get_full_model_path(model_path)
+        self.tree = RigidBodyTree(self.model_path, floating_base_type)
         self._visualizer = None
-        RigidBodyTree.__init__(self)
-
-    def get_plant_system(self):
-        '''
-        Implements the get_mdp_diagram method in DrakeEnv by constructing a RigidBodyPlant
-        '''
-        return builder.AddSystem(RigidBodyPlant(tree))
+        super(RigidBodyTreeEnv, self).__init__()
 
     @property
     def visualizer(self):
         if self._visualizer is None:
-            self._visualizer = MeshcatRigidBodyVisualizer(self.tree, draw_collision=True)
+            self._visualizer = MeshcatVisualizerRBT(self.tree)
         return self._visualizer
 
-    @property
-    def action_space(self):
-        return spaces.Box(*self.action_limits)
+    def plant_system(self):
+        '''
+        Implements the plant_system method in DrakeEnv by constructing a RigidBodyPlant
+        '''
+        self.rbp = RigidBodyPlant(self.tree)
+        return self.rbp
+
+    def get_input_port_action(self):
+        '''
+        Returns the system input port that corresponds to the action
+        '''
+        return self.rbp.actuator_command_input_port()
+
+    def get_observation(self):
+        return self.get_state()
+    
+    def get_state(self):
+        '''
+        Returns the system output port that corresponds to the observation
+        '''
+        rbp_context = self.simulator.get_context()
+        return rbp_context.get_continuous_state().get_vector().get_value()
 
     @property
     def action_space(self):
-        return spaces.Box(*self.observation_limits)
+        return gym.spaces.Box(*self.action_limits, dtype=np.float32)
+
+    @property
+    def observation_space(self):
+        return gym.spaces.Box(*self.observation_limits, dtype=np.float32)
 
     @property
     def action_limits(self):
@@ -49,12 +68,8 @@ class RigidBodyTreeEnv(drake_env.DrakeEnv):
         '''
         raise NotImplementedError
 
-
-    def get_reward(self, state, action):
+    def render(self, mode='human', close=False):
         '''
-        Subclasses should implement their own reward functions
+        Notifies the visualizer to redraw the image.
         '''
-        raise NotImplementedError
-
-    def init_visualizer(self):
-        return MeshcatRigidBodyVisualizer(tree_)
+        self.visualizer.draw(self.get_state())

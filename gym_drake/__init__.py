@@ -16,7 +16,7 @@ register(
 )
 
 register(
-    id='DrakeAcrobotRBTEnv-v0',
+    id='DrakeAcrobotRBT-v0',
     entry_point='gym_drake.envs:AcrobotRBTEnv',
 )
 
