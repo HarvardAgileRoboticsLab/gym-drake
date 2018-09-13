@@ -28,6 +28,7 @@ class MeshcatVisualizerMBP():
     def __init__(self, scene_graph, prefix="SceneGraph", zmq_url="tcp://127.0.0.1:6000"):
         self._zmq_url = zmq_url
         self._scene_graph = scene_graph
+        self._scene_graph_output = scene_graph.AllocateOutput()
         self.prefix = prefix
         self.vis = meshcat.Visualizer(zmq_url=zmq_url)
         self.vis[self.prefix].delete()
@@ -92,7 +93,9 @@ class MeshcatVisualizerMBP():
 
     def draw(self, context):
         assert isinstance(context, Context)
-        pose_bundle = self._scene_graph.get_output_port(0).EvalAbstract(context).get_value()
+        self._scene_graph.CalcOutput(context, self._scene_graph_output)
+        pose_bundle = self._scene_graph_output.get_data(0).get_value()
+        # pose_bundle = self._scene_graph.get_output_port(0).EvalAbstract(context).get_value()
 
         for frame_i in range(pose_bundle.get_num_poses()):
             # SceneGraph currently sets the name in PoseBundle as

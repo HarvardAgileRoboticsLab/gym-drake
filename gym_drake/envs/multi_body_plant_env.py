@@ -62,6 +62,7 @@ class MultiBodyPlantEnv(drake_env.DrakeEnv):
             self.mbp.get_continuous_state_output_port())
         self.diagram = builder.Build()
 
+        self._output = self.mbp.AllocateOutput()
         return self.diagram
 
     def get_input_port_action(self):
@@ -70,11 +71,17 @@ class MultiBodyPlantEnv(drake_env.DrakeEnv):
         '''
         return self.diagram.get_input_port(self._input_port_index_action)
 
-    def get_output_port_observation(self):
+    def get_observation(self):
+        return self.get_state()
+
+    def get_state(self):
         '''
         Returns the system output port that corresponds to the observation
         '''
-        raise self.diagram.get_output_port(self._output_port_index_state)
+        sim_context = self.simulator.get_context()
+        mbp_context = self.diagram.GetSubsystemContext(
+            self.mbp, sim_context)
+        return mbp_context.get_continuous_state().get_vector().get_value()
 
     @property
     def action_space(self):
@@ -82,7 +89,7 @@ class MultiBodyPlantEnv(drake_env.DrakeEnv):
 
     @property
     def observation_space(self):
-        return gym.spaces.Box(*self.observation_limits)
+        return gym.spaces.Box(*self.observation_limits, dtype=np.float32)
 
     @property
     def action_limits(self):
@@ -98,17 +105,11 @@ class MultiBodyPlantEnv(drake_env.DrakeEnv):
         '''
         raise NotImplementedError
 
-    def get_reward(self, state, action):
-        '''
-        Subclasses should implement their own reward functions
-        '''
-        raise NotImplementedError
-
     def render(self, mode='human', close=False):
         '''
         Sends an LCM message to the visualizer
         '''
         sim_context = self.simulator.get_context()
-        sg_context = context = self.diagram.GetSubsystemContext(
+        sg_context = self.diagram.GetSubsystemContext(
             self.scene_graph, sim_context)
         self.visualizer.draw(sg_context)

@@ -1,5 +1,6 @@
 import gym
-from gym import (error, spaces, utils)
+from gym import (error, spaces)
+from gym.utils import seeding
 import numpy as np
 from pydrake.all import (
     DiagramBuilder,
@@ -15,14 +16,8 @@ class DrakeEnv(gym.Env):
         Sets up the System diagram and creates a drake visualizer object to
         send LCM messages to during the render method.
 
-        Subclasses must implement the methods:
-            - plant_system()
-            - visualizer()
-            - get_input_port_action()
-            - get_output_port_observation()
-            - action_space()
-            - observation_space()
-            - render()
+        Subclasses must implement the methods below that throw a
+        NotImplementedError
         '''
 
         # Create the Diagram.
@@ -33,18 +28,15 @@ class DrakeEnv(gym.Env):
         self.simulator = Simulator(self.system, self.context)
         self.simulator.set_publish_every_time_step(False)
 
+    def seed(self, seed=None):
+        self.np_random, seed = seeding.np_random(seed)
+        return [seed]
+
     def plant_system(self):
         '''
         Returns the fully constructed MDP diagram which is connected to the
         vector source for simulation. Each subclass should implement this
         method.
-        '''
-        raise NotImplementedError
-
-    @property
-    def visualizer(self):
-        '''
-        Initializes and returns a DrakeVisualizer system. This must be overridden by subclasses.
         '''
         raise NotImplementedError
 
@@ -54,7 +46,13 @@ class DrakeEnv(gym.Env):
         '''
         raise NotImplementedError
 
-    def get_output_port_observation(self):
+    def get_observation(self):
+        '''
+        Returns the system output port that corresponds to the observation
+        '''
+        raise NotImplementedError
+
+    def get_state(self):
         '''
         Returns the system output port that corresponds to the observation
         '''
@@ -74,21 +72,36 @@ class DrakeEnv(gym.Env):
         '''
         raise NotImplementedError
 
+    def get_reward(self, state, action):
+        '''
+        Computes the reward from the state and an action
+        '''
+        raise NotImplementedError
+
     def step(self, action):
         '''
         Simulates the system diagram for a short period of time
         '''
+        # Fix input port with action and simulate
         action_fixed_input_port_value = self.context.FixInputPort(
             self.get_input_port_action().get_index(), action)
         self.simulator.StepTo(self.context.get_time() + self.dt)
-        # return observation, reward, done, info
+
+        # Get the observation, reward, and terminal conditions
+        state = self.get_state()
+        observation = self.get_observation()
+        reward = self.get_reward(state, action)
+        done = self.is_done()
+        info = {}   
+
+        return observation, reward, done, info
 
     def reset(self):
         '''
         Resets the state in the system diagram
         '''
         self.context.set_time(0)
-        pass
+        pass # TODO: actually reset the state
 
     def render(self, mode='human', close=False):
         '''
