@@ -17,7 +17,8 @@ class CartpoleMBPEnv(multi_body_plant_env.MultiBodyPlantEnv):
 
     @property
     def observation_limits(self):
-        return (np.array([-np.inf, -np.inf]), np.array([np.inf, np.inf]))
+        return (np.array([-np.inf, -np.inf, -np.inf, -np.inf]),
+                np.array([np.inf, np.inf, np.inf, np.inf]))
 
     @property
     def dt(self):

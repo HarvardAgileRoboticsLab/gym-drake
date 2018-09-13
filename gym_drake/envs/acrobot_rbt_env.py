@@ -17,7 +17,8 @@ class AcrobotRBTEnv(rigid_body_tree_env.RigidBodyTreeEnv):
 
     @property
     def observation_limits(self):
-        return (np.array([-np.inf, -np.inf]), np.array([np.inf, np.inf]))
+        return (np.array([-np.inf, -np.inf, -np.inf, -np.inf]),
+                np.array([np.inf, np.inf, np.inf, np.inf]))
 
     @property
     def dt(self):

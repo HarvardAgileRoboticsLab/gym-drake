@@ -102,6 +102,7 @@ class DrakeEnv(gym.Env):
         '''
         self.context.set_time(0)
         pass # TODO: actually reset the state
+        return self.get_observation()
 
     def render(self, mode='human', close=False):
         '''
