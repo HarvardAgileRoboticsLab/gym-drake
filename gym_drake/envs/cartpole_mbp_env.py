@@ -17,8 +17,7 @@ class CartpoleMBPEnv(multi_body_plant_env.MultiBodyPlantEnv):
 
     @property
     def observation_limits(self):
-        return (np.array([-np.inf, -np.inf]),
-                        np.array([np.inf, np.inf]))
+        return (np.array([-np.inf, -np.inf]), np.array([np.inf, np.inf]))
 
     @property
     def dt(self):
@@ -31,7 +30,7 @@ class CartpoleMBPEnv(multi_body_plant_env.MultiBodyPlantEnv):
             return -err.dot(err) - action.dot(action)
         else:
             # sparse reward
-            return 1.0 if err < eps  else 0.0
+            return 1.0 if err < eps else 0.0
 
     def is_done(self):
         '''
