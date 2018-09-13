@@ -79,7 +79,8 @@ class MultiBodyPlantEnv(drake_env.DrakeEnv):
         Returns the system output port that corresponds to the observation
         '''
         sim_context = self.simulator.get_context()
-        mbp_context = self.diagram.GetSubsystemContext(
+        # TODO: Change GetMutableSubsystemContext to GetSubsystemContext once bindings land
+        mbp_context = self.diagram.GetMutableSubsystemContext(
             self.mbp, sim_context)
         return mbp_context.get_continuous_state().get_vector().get_value()
 
@@ -110,6 +111,7 @@ class MultiBodyPlantEnv(drake_env.DrakeEnv):
         Sends an LCM message to the visualizer
         '''
         sim_context = self.simulator.get_context()
-        sg_context = self.diagram.GetSubsystemContext(
+        # TODO: Change GetMutableSubsystemContext to GetSubsystemContext once bindings land
+        sg_context = self.diagram.GetMutableSubsystemContext(
             self.scene_graph, sim_context)
         self.visualizer.draw(sg_context)
