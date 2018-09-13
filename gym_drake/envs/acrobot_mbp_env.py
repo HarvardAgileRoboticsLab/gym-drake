@@ -4,6 +4,7 @@ from gym_drake.envs import multi_body_plant_env
 
 class AcrobotMBPEnv(multi_body_plant_env.MultiBodyPlantEnv):
     use_shaped_reward = True
+
     def __init__(self):
         # Call super-class constructor with the model path
         super(AcrobotMBPEnv, self).__init__("acrobot.sdf")
@@ -16,8 +17,7 @@ class AcrobotMBPEnv(multi_body_plant_env.MultiBodyPlantEnv):
 
     @property
     def observation_limits(self):
-        return (np.array([-np.inf, -np.inf]),
-                        np.array([np.inf, np.inf]))
+        return (np.array([-np.inf, -np.inf]), np.array([np.inf, np.inf]))
 
     @property
     def dt(self):
@@ -30,7 +30,7 @@ class AcrobotMBPEnv(multi_body_plant_env.MultiBodyPlantEnv):
             return -err.dot(err) - action.dot(action)
         else:
             # sparse reward
-            return 1.0 if err < self.eps  else 0.0    
+            return 1.0 if err < self.eps else 0.0
 
     def is_done(self):
         '''
