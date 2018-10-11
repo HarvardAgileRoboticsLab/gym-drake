@@ -16,6 +16,11 @@ register(
 )
 
 register(
+    id='DrakePendulumRBT-v0',
+    entry_point='gym_drake.envs:PendulumRBTEnv',
+)
+
+register(
     id='DrakeAcrobotRBT-v0',
     entry_point='gym_drake.envs:AcrobotRBTEnv',
 )

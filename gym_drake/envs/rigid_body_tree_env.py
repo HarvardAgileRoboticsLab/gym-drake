@@ -46,6 +46,13 @@ class RigidBodyTreeEnv(drake_env.DrakeEnv):
         rbp_context = self.simulator.get_context()
         return rbp_context.get_continuous_state().get_vector().get_value()
 
+    def set_state(self, state):
+        '''
+        Sets the system state
+        '''
+        rbp_context = self.simulator.get_context()
+        self.rbp.set_state_vector(rbp_context, state)
+
     @property
     def action_space(self):
         return gym.spaces.Box(*self.action_limits, dtype=np.float32)

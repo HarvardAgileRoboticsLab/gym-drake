@@ -1,4 +1,5 @@
 import os
+import numpy as np
 
 def FindResource(filename):
     return os.path.join(os.path.dirname(os.path.dirname(__file__)), filename)
@@ -22,3 +23,9 @@ def Rgba2Hex(rgb):
     for i in range(3):
         val += (256**(2 - i)) * int(255 * rgb[i])
     return val
+
+def wrap_angle(theta):
+    '''
+    Moves an angle into the range [-pi,pi)
+    '''
+    return (theta + np.pi) % (2 * np.pi ) - np.pi

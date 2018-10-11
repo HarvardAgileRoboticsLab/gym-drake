@@ -38,4 +38,4 @@ class AcrobotMBPEnv(multi_body_plant_env.MultiBodyPlantEnv):
         Returns true if the acrobot is close enough to the goal
         '''
         err = self.state_des - self.get_state()
-        return err.dot(err) < self.eps
+        return err.dot(err) < self.eps or self.context.get_time() > 10
