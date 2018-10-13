@@ -19,7 +19,7 @@ class KukaArmRBTEnv(rigid_body_tree_env.RigidBodyTreeEnv):
 
     @property
     def action_limits(self):
-        return (-300*np.pi*np.ones(7), 300*np.pi*np.ones(7))
+        return (-3*np.pi*np.ones(7), 3*np.pi*np.ones(7))
 
     @property
     def observation_limits(self):
@@ -39,6 +39,10 @@ class KukaArmRBTEnv(rigid_body_tree_env.RigidBodyTreeEnv):
         else:
             # sparse reward
             return 1.0 if err.dot(err) < eps else 0.0
+
+    def step(self, action):
+        action *= 100
+        return super(KukaArmRBTEnv, self).step(action)
 
     def is_done(self):
         '''
