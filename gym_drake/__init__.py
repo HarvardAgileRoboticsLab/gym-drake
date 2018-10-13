@@ -21,6 +21,11 @@ register(
 )
 
 register(
+    id='DrakeKukaArmRBT-v0',
+    entry_point='gym_drake.envs:KukaArmRBTEnv',
+)
+
+register(
     id='DrakeAcrobotRBT-v0',
     entry_point='gym_drake.envs:AcrobotRBTEnv',
 )
