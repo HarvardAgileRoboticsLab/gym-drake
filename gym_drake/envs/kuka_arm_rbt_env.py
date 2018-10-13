@@ -14,7 +14,7 @@ class KukaArmRBTEnv(rigid_body_tree_env.RigidBodyTreeEnv):
         super(KukaArmRBTEnv, self).__init__(model_path, FloatingBaseType.kFixed)
         self.state_des = np.zeros(14)
         self.Q = np.eye(14)
-        self.R = 1e-3*np.eye(7)
+        self.R = 1e-6*np.eye(7)
         self.eps = 1e-2
 
     @property
@@ -35,10 +35,12 @@ class KukaArmRBTEnv(rigid_body_tree_env.RigidBodyTreeEnv):
         err = self.state_des - state
         if self.use_shaped_reward:
             # quadratic cost on the error and action
-            return -err.dot(self.Q).dot(err) - action.dot(self.R).dot(action)
+            reward = -err.dot(self.Q).dot(err) - action.dot(self.R).dot(action)
+            reward += 1000.0 if err.dot(err) < self.eps else 0.0
+            return reward
         else:
             # sparse reward
-            return 1.0 if err.dot(err) < eps else 0.0
+            return 1.0 if err.dot(err) < self.eps else 5.0
 
     def step(self, action):
         action *= 100
@@ -49,7 +51,7 @@ class KukaArmRBTEnv(rigid_body_tree_env.RigidBodyTreeEnv):
         Returns true if the system is close enough to the goal
         '''
         err = self.state_des - self.get_state()
-        return err.dot(err) < self.eps or self.context.get_time() > 20
+        return err.dot(err) < self.eps or self.context.get_time() > 5
 
     def reset_state(self):
         # random state set uniformly between +/- 3/4*pi
