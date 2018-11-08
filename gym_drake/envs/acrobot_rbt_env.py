@@ -13,7 +13,7 @@ class AcrobotRBTEnv(rigid_body_tree_env.RigidBodyTreeEnv):
 
     @property
     def action_limits(self):
-        return (np.array([-2.0]), np.array([2.0]))
+        return (np.array([-20.0]), np.array([20.0]))
 
     @property
     def observation_limits(self):
@@ -22,13 +22,13 @@ class AcrobotRBTEnv(rigid_body_tree_env.RigidBodyTreeEnv):
 
     @property
     def dt(self):
-        return 0.1
+        return 0.05
 
     def get_reward(self, state, action):
         err = self.state_des - state
         if self.use_shaped_reward:
             # quadratic cost on the error and action
-            return -err.dot(err) - action.dot(action)
+            return -err.dot(err)# - action.dot(action)
         else:
             # sparse reward
             return 1.0 if err < eps else 0.0

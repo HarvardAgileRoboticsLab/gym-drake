@@ -7,4 +7,6 @@ from gym_drake.envs.acrobot_mbp_env import AcrobotMBPEnv
 from gym_drake.envs.cartpole_mbp_env import CartpoleMBPEnv
 
 # RigidBodyPlant Envs
+from gym_drake.envs.pendulum_rbt_env import PendulumRBTEnv
 from gym_drake.envs.acrobot_rbt_env import AcrobotRBTEnv
+from gym_drake.envs.kuka_arm_rbt_env import KukaArmRBTEnv

@@ -5,6 +5,8 @@ import gym
 from gym import wrappers, logger
 import gym_drake
 
+import numpy as np
+
 class RandomAgent(object):
     """The world's simplest agent!"""
     def __init__(self, action_space):
@@ -42,6 +44,12 @@ if __name__ == '__main__':
         while True:
             action = agent.act(ob, reward, done)
             ob, reward, done, _ = env.step(action)
+            print "reward: {}".format(reward)
+            print "ob[0]: {}".format(ob[0])
+            err = ob[0]-np.pi
+            err = (err + np.pi) % (2*np.pi) - np.pi
+            print "err: {}".format(err)
+            print "err^2: {}".format(err**2)
             if done:
                 break
             # Note there's no env.render() here. But the environment still can open window and

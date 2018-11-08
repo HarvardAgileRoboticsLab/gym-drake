@@ -78,10 +78,19 @@ class DrakeEnv(gym.Env):
         '''
         raise NotImplementedError
 
+    def reset_state(self):
+        '''
+        Computes the reward from the state and an action
+        '''
+        raise NotImplementedError
+
     def step(self, action):
         '''
         Simulates the system diagram for a short period of time
         '''
+        # Only allow valid actions from the action space
+        action = validate_action(action, self.action_space)
+        
         # Fix input port with action and simulate
         action_fixed_input_port_value = self.context.FixInputPort(
             self.get_input_port_action().get_index(), action)
@@ -101,7 +110,7 @@ class DrakeEnv(gym.Env):
         Resets the state in the system diagram
         '''
         self.context.set_time(0)
-        pass # TODO: actually reset the state
+        self.reset_state()
         return self.get_observation()
 
     def render(self, mode='human', close=False):
@@ -109,3 +118,13 @@ class DrakeEnv(gym.Env):
         Notifies the visualizer to draw the current state. Different implementations based on MultiBodyPlant and RigidBodyTree
         '''
         raise NotImplementedError
+
+def validate_action(action, action_space):
+    '''
+    Ensure the action is within the action space
+    '''
+    if type(action_space) is spaces.Box:
+        action = np.minimum(action, action_space.high)
+        action = np.maximum(action, action_space.low)
+
+    return action
