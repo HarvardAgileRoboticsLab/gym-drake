@@ -2,8 +2,8 @@ import gym
 import numpy as np
 from pydrake.all import RigidBodyTree, RigidBodyPlant, AddModelInstanceFromUrdfFile, FloatingBaseType
 from gym_drake.envs import drake_env
-from meshcat_visualizer_rbt import MeshcatVisualizerRBT
-from utils import get_full_model_path
+from gym_drake.envs import meshcat_visualizer_rbt
+from .utils import get_full_model_path
 
 class RigidBodyTreeEnv(drake_env.DrakeEnv):
     '''
@@ -20,7 +20,7 @@ class RigidBodyTreeEnv(drake_env.DrakeEnv):
     @property
     def visualizer(self):
         if self._visualizer is None:
-            self._visualizer = MeshcatVisualizerRBT(self.tree)
+            self._visualizer = meshcat_visualizer_rbt.MeshcatVisualizerRBT(self.tree)
         return self._visualizer
 
     def plant_system(self):

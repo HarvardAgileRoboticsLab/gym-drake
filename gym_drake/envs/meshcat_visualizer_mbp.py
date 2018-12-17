@@ -20,7 +20,7 @@ from pydrake.all import (
     RotationMatrix,
 )
 from drake import lcmt_viewer_load_robot
-from utils import Rgba2Hex
+from .utils import Rgba2Hex
 import meshcat
 import meshcat.transformations as tf
 
@@ -79,8 +79,8 @@ class MeshcatVisualizerMBP():
                         meshcat.geometry.ObjMeshGeometry.from_file(
                             geom.string_data[0:-3] + "obj")
                 else:
-                    print "UNSUPPORTED GEOMETRY TYPE ", \
-                        geom.type, " IGNORED"
+                    print("UNSUPPORTED GEOMETRY TYPE ", \
+                        geom.type, " IGNORED")
                     continue
 
                 self.vis[self.prefix][source_name][str(link.robot_num)][

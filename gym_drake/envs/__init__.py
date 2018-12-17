@@ -10,3 +10,7 @@ from gym_drake.envs.cartpole_mbp_env import CartpoleMBPEnv
 from gym_drake.envs.pendulum_rbt_env import PendulumRBTEnv
 from gym_drake.envs.acrobot_rbt_env import AcrobotRBTEnv
 from gym_drake.envs.kuka_arm_rbt_env import KukaArmRBTEnv
+
+# Visualizer stuff
+from gym_drake.envs.meshcat_visualizer_rbt import MeshcatVisualizerRBT
+from gym_drake.envs.meshcat_visualizer_mbp import MeshcatVisualizerMBP

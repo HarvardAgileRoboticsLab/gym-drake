@@ -14,7 +14,7 @@ from pydrake.all import (
     RigidBodyTree,
     Shape,
 )
-from utils import Rgba2Hex
+from .utils import Rgba2Hex
 import meshcat
 import meshcat.transformations as tf
 
@@ -84,8 +84,8 @@ class MeshcatVisualizerRBT(object):
                         # respect mesh scale
                         element_local_tf[0:3, 0:3] *= geom.scale
                     else:
-                        print "UNSUPPORTED GEOMETRY TYPE ",\
-                              geom.getShape(), " IGNORED"
+                        print("UNSUPPORTED GEOMETRY TYPE ",\
+                              geom.getShape(), " IGNORED")
                         continue
 
                     rgba = [1., 0.7, 0., 1.]

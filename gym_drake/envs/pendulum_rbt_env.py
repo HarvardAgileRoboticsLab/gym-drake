@@ -1,7 +1,7 @@
 import numpy as np
 from gym_drake.envs import rigid_body_tree_env
 from pydrake.all import FloatingBaseType
-from utils import wrap_angle
+from .utils import wrap_angle
 
 class PendulumRBTEnv(rigid_body_tree_env.RigidBodyTreeEnv):
     use_shaped_reward = True

@@ -8,8 +8,8 @@ from pydrake.all import (
     UniformGravityFieldElement,
 )
 from gym_drake.envs import drake_env
-from meshcat_visualizer_mbp import MeshcatVisualizerMBP
-from utils import get_full_model_path
+from gym_drake.envs import meshcat_visualizer_mbp
+from .utils import get_full_model_path
 
 class MultiBodyPlantEnv(drake_env.DrakeEnv):
     '''
@@ -24,7 +24,7 @@ class MultiBodyPlantEnv(drake_env.DrakeEnv):
 
     def init_visualizer(self):
         if self._visualizer is None:
-            self._visualizer = MeshcatVisualizerMBP(self.scene_graph)
+            self._visualizer = meshcat_visualizer_mbp.MeshcatVisualizerMBP(self.scene_graph)
             self._visualizer.load()
 
     @property
